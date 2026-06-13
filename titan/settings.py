@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,48 +24,72 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-bpkpomo&68$9x6#%$k_4cjw=-5-byxqt7cp78er5&fj^+v6f9j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+
+CORS_ORIGIN_WHITELIST = [
+    'www.eheindustries.com',
+    'eheindustries.com',
+    'http://localhost:3000',
+    'www.eheindia.com',
+    'eheindia.com'
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://eheindia.com",
+    "https://eheindustries.com",
+    "https://www.eheindia.com",
+    "https://www.eheindustries.com",
+    'http://localhost:3000',
+]
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'lead',
+    'rest_framework',
+    'corsheaders',
+    'authentication',
+    'organization',  # Manages businesses & locations
+    'account',       # Manages user profiles
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_NAME": "accessToken",
+    "REFRESH_TOKEN_NAME": "refreshToken",
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
+
+AUTH_COOKIE_SECURE = True  # Send cookie only over HTTPS
+AUTH_COOKIE_HTTP_ONLY = True  # Prevent JavaScript access (security)
+AUTH_COOKIE_SAMESITE = "None"  # Allow cross-site requests if needed
+AUTH_COOKIE_PATH = "/"
+
 ROOT_URLCONF = 'titan.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
+TEMPLATES = []
 
 WSGI_APPLICATION = 'titan.wsgi.application'
 
@@ -75,11 +100,11 @@ WSGI_APPLICATION = 'titan.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vmss$vms_db',
-		'USER':'vmss',
-		'PASSWORD' : 'Car@2fast',
-		'HOST':'vmss.mysql.pythonanywhere-services.com',
-		'PORT':'3306',
+        'NAME': 'titan_db',
+		'USER':'root',
+		'PASSWORD' : 'root',
+		'HOST':'127.0.0.1',
+		'PORT':'3307',
     }
 }
 
@@ -108,9 +133,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 
@@ -118,4 +145,4 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL = 'static/'
